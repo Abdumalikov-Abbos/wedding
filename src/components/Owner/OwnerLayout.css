@@ -1,0 +1,42 @@
+/* Basic styles for owner layout - adjust as needed */
+.owner-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.owner-sidebar {
+    width: 200px; /* Adjust sidebar width */
+    background-color: #f0f0f0; /* Sidebar background color */
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.owner-sidebar h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+.owner-sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.owner-sidebar li {
+    margin-bottom: 10px;
+}
+
+.owner-sidebar a {
+    text-decoration: none;
+    color: #333; /* Link color */
+    font-weight: bold;
+}
+
+.owner-sidebar a:hover {
+    color: #007bff; /* Link hover color */
+}
+
+.owner-content {
+    flex-grow: 1;
+    padding: 20px;
+} 

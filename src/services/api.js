@@ -43,7 +43,7 @@ export const authAPI = {
 };
 
 export const restaurantAPI = {
-  getAll: () => api.get('/restaurants', { headers: authHeader() }),
+  getAll: (params) => api.get('/restaurants', { params, headers: authHeader() }),
   getById: (id) => api.get(`/restaurants/${id}`, { headers: authHeader() }),
   create: (data) => api.post('/restaurants', data, { headers: authHeader() }),
   update: (id, data) => api.put(`/restaurants/${id}`, data, { headers: authHeader() }),

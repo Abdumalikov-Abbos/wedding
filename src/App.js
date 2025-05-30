@@ -11,6 +11,10 @@ import OwnerDashboard from './pages/Owner/Dashboard';
 import RestaurantDetail from './pages/User/RestaurantDetail';
 import UserReservations from './pages/User/Reservations';
 import EditRestaurant from './pages/Admin/EditRestaurant';
+import AdminLayout from './components/Admin/AdminLayout';
+import OwnerLayout from './components/Owner/OwnerLayout';
+import MyRestaurant from './pages/Owner/MyRestaurant';
+import OwnerList from './pages/Admin/OwnerList';
 import "./App.css";
 
 function App() {
@@ -33,34 +37,35 @@ function App() {
             </ProtectedRoute>
           } />
           
-          {/* To'yxona egasi sahifalar */}
+          {/* To'yxona egasi sahifalar (Wrapped in OwnerLayout) */}
           <Route path="/owner" element={
             <ProtectedRoute roles={['restaurant_owner']}>
-              <OwnerDashboard />
+              <OwnerLayout />
             </ProtectedRoute>
-          } />
+          }>
+            {/* Nested owner routes */}
+            <Route index element={<OwnerDashboard />} />
+            <Route path="add-restaurant" element={<AddRestaurant />} />
+            <Route path="my-restaurant" element={<MyRestaurant />} />
+            <Route path="bookings" element={<div>Owner Bookings Page Placeholder</div>} />
+          </Route>
           
-          {/* Admin sahifalar */}
-          <Route path="/admin" element={
-            <ProtectedRoute roles={['admin']}>
-              <AdminDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/restaurants" element={
-            <ProtectedRoute roles={['admin']}>
-              <RestaurantList />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/add-restaurant" element={
-            <ProtectedRoute roles={['admin']}>
-              <AddRestaurant />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/restaurants/:id/edit" element={
-            <ProtectedRoute roles={['admin']}>
-              <EditRestaurant />
-            </ProtectedRoute>
-          } />
+          {/* Admin sahifalar (Wrapped in AdminLayout) */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute roles={['admin']}>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
+            {/* Nested admin routes */}
+            <Route index element={<AdminDashboard />} />
+            <Route path="restaurants" element={<RestaurantList />} />
+            <Route path="add-restaurant" element={<AddRestaurant />} />
+            <Route path="restaurants/:id/edit" element={<EditRestaurant />} />
+            <Route path="owners" element={<OwnerList />} />
+          </Route>
         </Routes>
       </Router>
     </AuthProvider>

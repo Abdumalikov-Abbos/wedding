@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { restaurantAPI, userAPI } from '../../services/api';
 import './EditRestaurant.css';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
+import moment from 'moment';
 
 const EditRestaurant = () => {
   const { id } = useParams();
@@ -26,10 +29,15 @@ const EditRestaurant = () => {
   const [submitError, setSubmitError] = useState(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
+  // State for Calendar and Bookings
+  const [calendarDate, setCalendarDate] = useState(new Date());
+  const [bookings, setBookings] = useState([]);
+  const [selectedDateBookings, setSelectedDateBookings] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch restaurant data
+        // restaurant data
         const restaurantResponse = await restaurantAPI.getById(id);
         const restaurantData = restaurantResponse.data;
         setRestaurant(restaurantData);
@@ -41,14 +49,24 @@ const EditRestaurant = () => {
           capacity: restaurantData.capacity || '',
           pricePerSeat: restaurantData.pricePerSeat || '',
           phone: restaurantData.phone || '',
-          owner: restaurantData.owner?._id || '', // Assuming owner is an object with _id
+          owner: restaurantData.owner?._id || '',
           existingImages: restaurantData.images || [],
           newImages: []
         });
 
         // Fetch users for owner selection
-        const usersResponse = await userAPI.getAll(); // Assuming userAPI.getAll exists
+        const usersResponse = await userAPI.getAll();
         setUsers(usersResponse.data);
+
+        // Fetch bookings for this restaurant
+        try {
+          const bookingsResponse = await restaurantAPI.getRestaurantBookings(id);
+          setBookings(bookingsResponse.data);
+        } catch (bookingErr) {
+          console.error("Error fetching bookings:", bookingErr);
+          setBookings([]);
+        }
+
         setLoading(false);
       } catch (err) {
         setError('Malumotlarni yuklashda xatolik yuz berdi');
@@ -91,15 +109,39 @@ const EditRestaurant = () => {
     formData.existingImages.forEach(image => data.append('existingImages', image));
 
     try {
-      await restaurantAPI.update(id, data); // Assuming restaurantAPI.update exists
+      await restaurantAPI.update(id, data);
       setSubmitSuccess(true);
       setSubmitLoading(false);
-      // Optionally navigate back to the list or show a success message
-      // navigate('/admin/restaurants');
     } catch (err) {
       setSubmitError('Toyxonani tahrirlashda xatolik yuz berdi');
       setSubmitLoading(false);
     }
+  };
+
+  // Calendar Logic
+  const tileClassName = ({ date, view }) => {
+    if (view === 'month') {
+      const dateString = moment(date).format('YYYY-MM-DD');
+      const isBooked = bookings.some(booking =>
+         moment(booking.date).format('YYYY-MM-DD') === dateString
+      );
+      const isPast = moment(date).isBefore(moment(), 'day');
+
+      if (isBooked) {
+        return 'booked-day';
+      } else if (isPast) {
+         return 'past-day';
+      }
+    }
+    return null;
+  };
+
+  const handleCalendarClick = (date) => {
+      const dateString = moment(date).format('YYYY-MM-DD');
+      const bookingsOnThisDate = bookings.filter(booking =>
+         moment(booking.date).format('YYYY-MM-DD') === dateString
+      );
+      setSelectedDateBookings(bookingsOnThisDate);
   };
 
   if (loading) return <div className="loading">Yuklanmoqda...</div>;
@@ -176,7 +218,6 @@ const EditRestaurant = () => {
             {Array.from(formData.newImages).map((image, index) => (
               <div key={index} className="image-preview">
                 <img src={URL.createObjectURL(image)} alt="New" width="100" />
-                {/* Add a way to remove new images if needed */}
               </div>
             ))}
           </div>
@@ -186,8 +227,44 @@ const EditRestaurant = () => {
           {submitLoading ? 'Saqlanmoqda...' : 'Saqlash'}
         </button>
       </form>
+
+      <hr />
+
+      <div className="booking-calendar-section">
+           <h3>Band qilingan kunlar</h3>
+           <Calendar
+                onChange={setCalendarDate}
+                value={calendarDate}
+                tileClassName={tileClassName}
+                onClickDay={handleCalendarClick}
+           />
+
+           {selectedDateBookings.length > 0 && (
+                <div className="selected-date-bookings">
+                    <h4>{moment(calendarDate).format('YYYY-MM-DD')} dagi bandliklar:</h4>
+                    <ul>
+                        {selectedDateBookings.map(booking => (
+                            <li key={booking._id}>
+                                Kim tomonidan: {booking.user?.fullName || booking.user?.username || 'Noma\'lum foydalanuvchi'} - Joylar soni: {booking.partySize}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+           )}
+            {selectedDateBookings.length === 0 && calendarDate && !moment(calendarDate).isBefore(moment(), 'day') && (
+                 <div className="selected-date-bookings">
+                    <h4>{moment(calendarDate).format('YYYY-MM-DD')} dagi bandliklar:</h4>
+                    <p>Bu kunda bandliklar yo'q.</p>
+                 </div>
+            )}
+      </div>
+
     </div>
   );
 };
 
 export default EditRestaurant; 
+
+
+
+

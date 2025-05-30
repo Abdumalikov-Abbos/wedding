@@ -182,4 +182,4 @@ const RestaurantDetail = () => {
   );
 };
 
-export default RestaurantDetail; 
+export default RestaurantDetail;
