@@ -24,6 +24,9 @@ const AdminLayout = () => {
              <Link to="/admin/owners">Restoran egalari</Link>
           </li>
           {/* Add more admin navigation links here */}
+          <li>
+            <Link to="/admin/reservations">Barcha bronlarni ko'rish</Link>
+          </li>
         </ul>
         <div className="sidebar-footer">
             <button onClick={logout}>Chiqish</button>

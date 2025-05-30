@@ -15,6 +15,7 @@ import AdminLayout from './components/Admin/AdminLayout';
 import OwnerLayout from './components/Owner/OwnerLayout';
 import MyRestaurant from './pages/Owner/MyRestaurant';
 import OwnerList from './pages/Admin/OwnerList';
+import ReservationList from './pages/Admin/ReservationList';
 import "./App.css";
 
 function App() {
@@ -65,6 +66,7 @@ function App() {
             <Route path="add-restaurant" element={<AddRestaurant />} />
             <Route path="restaurants/:id/edit" element={<EditRestaurant />} />
             <Route path="owners" element={<OwnerList />} />
+            <Route path="reservations" element={<ReservationList />} />
           </Route>
         </Routes>
       </Router>
