@@ -1,0 +1,133 @@
+.edit-restaurant-container {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.edit-restaurant-container h2 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+}
+
+.edit-restaurant-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.edit-restaurant-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #34495e;
+}
+
+.edit-restaurant-form input[type="text"],
+.edit-restaurant-form input[type="number"],
+.edit-restaurant-form textarea,
+.edit-restaurant-form select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.edit-restaurant-form textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.edit-restaurant-form button[type="submit"] {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.edit-restaurant-form button[type="submit"]:hover:not(:disabled) {
+  background-color: #2980b9;
+}
+
+.edit-restaurant-form button[type="submit"]:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.image-previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.image-preview {
+  position: relative;
+  border: 1px solid #ddd;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.image-preview img {
+  display: block;
+  border-radius: 4px;
+}
+
+.image-preview button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: rgba(231, 76, 60, 0.8);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.image-preview button:hover {
+  background-color: rgba(192, 57, 43, 0.9);
+}
+
+.loading,
+.error,
+.success-message,
+.error-message {
+  text-align: center;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.loading {
+  color: #3498db;
+  background-color: #ebf5fb;
+}
+
+.error,
+.error-message {
+  color: #e74c3c;
+  background-color: #fde8e8;
+}
+
+.success-message {
+  color: #2ecc71;
+  background-color: #e9f7ef;
+} 

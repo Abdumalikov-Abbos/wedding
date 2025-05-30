@@ -1,65 +1,97 @@
-import { useState, useEffect } from 'react';
-import AdminNavbar from '../../components/admin/AdminNavbar';
-import RestaurantApprovalList from '../../components/admin/RestaurantApprovalList';
-import UserManagement from '../../components/admin/UserManagement';
-import ReservationOverview from '../../components/admin/ReservationOverview';
-import api from '../../services/api';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { restaurantAPI } from '../../services/api';
+import './Dashboard.css';
 
-function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState('restaurants');
-  const [pendingRestaurants, setPendingRestaurants] = useState([]);
-  const [loading, setLoading] = useState(true);
+const Dashboard = () => {
+  const [stats, setStats] = useState({
+    totalRestaurants: 0,
+    totalUsers: 0,
+    totalReservations: 0,
+    recentRestaurants: []
+  });
 
   useEffect(() => {
-    const fetchPendingRestaurants = async () => {
+    const fetchStats = async () => {
       try {
-        const response = await api.get('/restaurants', {
-          params: { status: 'pending' }
-        });
-        setPendingRestaurants(response.data);
+        const response = await restaurantAPI.getStats();
+        setStats(response.data);
       } catch (error) {
-        console.error('Error fetching pending restaurants:', error);
-      } finally {
-        setLoading(false);
+        console.error('Error fetching stats:', error);
       }
     };
 
-    if (activeTab === 'restaurants') {
-      fetchPendingRestaurants();
-    }
-  }, [activeTab]);
+    fetchStats();
+  }, []);
 
-  const handleStatusChange = async (restaurantId, status) => {
-    try {
-      await api.put(`/restaurants/${restaurantId}/status`, { status });
-      setPendingRestaurants(pendingRestaurants.filter(r => r._id !== restaurantId));
-    } catch (error) {
-      console.error('Error updating restaurant status:', error);
+  const handleDelete = async (restaurantId) => {
+    if (window.confirm('Bu toyxonani ochirishni xohlaysizmi?')) {
+      try {
+        await restaurantAPI.delete(restaurantId);
+        // Refresh stats after deletion
+        const response = await restaurantAPI.getStats();
+        setStats(response.data);
+      } catch (error) {
+        console.error('Error deleting restaurant:', error);
+      }
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <AdminNavbar activeTab={activeTab} setActiveTab={setActiveTab} />
-      
-      <div className="container mx-auto px-4 py-8">
-        {activeTab === 'restaurants' && (
-          <RestaurantApprovalList 
-            restaurants={pendingRestaurants} 
-            loading={loading}
-            onStatusChange={handleStatusChange}
-          />
-        )}
-        
-        {activeTab === 'users' && <UserManagement />}
-        {activeTab === 'reservations' && <ReservationOverview />}
+    <div className="admin-dashboard">
+      <div className="dashboard-header">
+        <h1>Admin Panel</h1>
+        <Link to="/admin/add-restaurant" className="add-restaurant-btn">
+          + Yangi to'yxona qo'shish
+        </Link>
       </div>
-      <Link to="/admin/add-owner" className="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600">
-        Yangi to'yxona egasi qo'shish
-      </Link>
+
+      <div className="stats-grid">
+        <div className="stat-card">
+          <h3>Jami to'yxonalar</h3>
+          <p className="stat-number">{stats.totalRestaurants}</p>
+        </div>
+        <div className="stat-card">
+          <h3>Jami foydalanuvchilar</h3>
+          <p className="stat-number">{stats.totalUsers}</p>
+        </div>
+        <div className="stat-card">
+          <h3>Jami buyurtmalar</h3>
+          <p className="stat-number">{stats.totalReservations}</p>
+        </div>
+      </div>
+
+      <div className="recent-restaurants">
+        <h2>So'nggi qo'shilgan to'yxonalar</h2>
+        <div className="restaurants-grid">
+          {stats.recentRestaurants.map(restaurant => (
+            <div key={restaurant._id} className="restaurant-card">
+              <div className="restaurant-image">
+                {restaurant.images?.[0] ? (
+                  <img src={restaurant.images[0]} alt={restaurant.name} />
+                ) : (
+                  <div className="no-image">Rasm yo'q</div>
+                )}
+              </div>
+              <div className="restaurant-info">
+                <h3>{restaurant.name}</h3>
+                <p>{restaurant.address}</p>
+                <p>{restaurant.district}</p>
+                <div className="restaurant-actions">
+                  <Link to={`/admin/restaurants/${restaurant._id}/edit`} className="edit-btn">
+                    Tahrirlash
+                  </Link>
+                  <button className="delete-btn" onClick={() => handleDelete(restaurant._id)}>
+                    O'chirish
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
-}
+};
 
-export default AdminDashboard;
+export default Dashboard;

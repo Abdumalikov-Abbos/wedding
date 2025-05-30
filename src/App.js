@@ -5,10 +5,12 @@ import HomePage from './pages/User/HomePage';
 import LoginPage from './pages/Auth/LoginPage';
 import RegisterPage from './pages/Auth/RegisterPage';
 import AdminDashboard from './pages/Admin/Dashboard';
+import RestaurantList from './pages/Admin/RestaurantList';
+import AddRestaurant from './pages/Admin/AddRestaurant';
 import OwnerDashboard from './pages/Owner/Dashboard';
 import RestaurantDetail from './pages/User/RestaurantDetail';
 import UserReservations from './pages/User/Reservations';
-import AddRestaurant from './pages/Admin/AddRestaurant';
+import EditRestaurant from './pages/Admin/EditRestaurant';
 import "./App.css";
 
 function App() {
@@ -44,12 +46,21 @@ function App() {
               <AdminDashboard />
             </ProtectedRoute>
           } />
+          <Route path="/admin/restaurants" element={
+            <ProtectedRoute roles={['admin']}>
+              <RestaurantList />
+            </ProtectedRoute>
+          } />
           <Route path="/admin/add-restaurant" element={
             <ProtectedRoute roles={['admin']}>
               <AddRestaurant />
             </ProtectedRoute>
           } />
-          <Route path="/add-restaurant" element={<AddRestaurant />} />
+          <Route path="/admin/restaurants/:id/edit" element={
+            <ProtectedRoute roles={['admin']}>
+              <EditRestaurant />
+            </ProtectedRoute>
+          } />
         </Routes>
       </Router>
     </AuthProvider>

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import authHeader from './auth-header';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
@@ -42,13 +43,15 @@ export const authAPI = {
 };
 
 export const restaurantAPI = {
-  getAll: (params) => api.get('/restaurants', { params }),
-  getById: (id) => api.get(`/restaurants/${id}`),
-  create: (data) => api.post('/restaurants', data),
-  update: (id, data) => api.put(`/restaurants/${id}`, data),
-  delete: (id) => api.delete(`/restaurants/${id}`),
+  getAll: () => api.get('/restaurants', { headers: authHeader() }),
+  getById: (id) => api.get(`/restaurants/${id}`, { headers: authHeader() }),
+  create: (data) => api.post('/restaurants', data, { headers: authHeader() }),
+  update: (id, data) => api.put(`/restaurants/${id}`, data, { headers: authHeader() }),
+  delete: (id) => api.delete(`/restaurants/${id}`, { headers: authHeader() }),
   approve: (id) => api.post(`/restaurants/${id}/approve`),
   reject: (id) => api.post(`/restaurants/${id}/reject`),
+  getStats: () => api.get('/admin/stats'),
+  updateStatus: (id, status) => api.put(`/restaurants/${id}/status`, { status: status }, { headers: authHeader() }),
 };
 
 export const reservationAPI = {
@@ -60,11 +63,12 @@ export const reservationAPI = {
 };
 
 export const userAPI = {
-  getAll: () => api.get('/users'),
-  getById: (id) => api.get(`/users/${id}`),
+  getAll: () => api.get('/users', { headers: authHeader() }),
+  getById: (id) => api.get(`/users/${id}`, { headers: authHeader() }),
   update: (id, data) => api.put(`/users/${id}`, data),
-  delete: (id) => api.delete(`/users/${id}`),
-  updateRole: (id, role) => api.put(`/users/${id}/role`, { role }),
+  delete: (id) => api.delete(`/users/${id}`, { headers: authHeader() }),
+  updateRole: (id, role) => api.put(`/users/${id}/role`, { role }, { headers: authHeader() }),
+  createOwner: (ownerData) => api.post('/users/owner', ownerData, { headers: authHeader() }),
 };
 
 export default api;
